@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Radiph Dangal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --border: #e5e5e3;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0;
+      background: rgba(250,250,249,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 760px; margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo { font-weight: 600; font-size: 15px; letter-spacing: -0.3px; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* LAYOUT */
+    main { max-width: 760px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+    /* HERO */
+    .hero {
+      padding: 5rem 0 3.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border-radius: 4px;
+      padding: 3px 10px;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.4rem, 6vw, 3.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--muted); }
+    .hero-bio {
+      font-size: 16px; color: var(--muted);
+      max-width: 520px; line-height: 1.75;
+      margin-bottom: 1.75rem;
+    }
+    .hero-links { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500;
+      border-radius: 6px; padding: 8px 16px;
+      text-decoration: none; cursor: pointer;
+      transition: all .18s;
+    }
+    .btn-primary {
+      background: var(--text); color: #fff; border: none;
+    }
+    .btn-primary:hover { background: #333; }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface); border-color: #ccc; }
+
+    /* SECTIONS */
+    section { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+    .section-label {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1.5rem;
+    }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+    .info-card .label { font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+    .info-card .value { font-size: 14px; font-weight: 500; }
+
+    /* INTERESTS */
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .tag {
+      font-size: 13px; color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+    }
+
+    /* CONNECT */
+    .social-list { display: flex; flex-direction: column; gap: .75rem; }
+    .social-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .85rem 1.25rem;
+      text-decoration: none; color: var(--text);
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .social-item:hover {
+      border-color: #aaa;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .social-left { display: flex; align-items: center; gap: 12px; }
+    .social-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .social-icon svg { width: 18px; height: 18px; }
+    .social-name { font-size: 14px; font-weight: 500; }
+    .social-handle { font-size: 12px; color: var(--muted); }
+    .arrow { color: var(--muted); font-size: 18px; }
+
+    /* FOOTER */
+    footer {
+      max-width: 760px; margin: 0 auto;
+      padding: 2rem 1.5rem;
+      font-size: 12px; color: var(--muted);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    @media (max-width: 560px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">Radiph Dangal</span>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#interests">Interests</a>
+      <a href="#connect">Connect</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Open to learning &amp; collaborating</div>
+    <h1>Hi, I'm Radiph.<br/><span>Curious by nature.</span></h1>
+    <p class="hero-bio">
+      A 16-year-old student from Sundarharaicha, Nepal — studying Science and Computer Science at Sukuna Secondary School.
+      I explore technology, ask a lot of questions, and believe the best way to learn is to just start.
+    </p>
+    <div class="hero-links">
+      <a href="https://github.com/radiph" target="_blank" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.09.68-.22.68-.49v-1.73c-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.1-1.48-1.1-1.48-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49C19.13 20.65 22 16.8 22 12.26 22 6.58 17.52 2 12 2z"/></svg>
+        GitHub
+      </a>
+      <a href="#connect" class="btn btn-ghost">Get in touch →</a>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label">About</div>
+    <div class="about-grid">
+      <div class="info-card">
+        <div class="label">Age</div>
+        <div class="value">16 years old</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Location</div>
+        <div class="value">Sundarharaicha, Nepal</div>
+      </div>
+      <div class="info-card">
+        <div class="label">School</div>
+        <div class="value">Sukuna Secondary School</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Subjects</div>
+        <div class="value">Science &amp; Computer Science</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERESTS -->
+  <section id="interests">
+    <div class="section-label">What I'm into</div>
+    <div class="tags">
+      <span class="tag">🖥️ Computer Science</span>
+      <span class="tag">🔬 Science</span>
+      <span class="tag">🔐 Cybersecurity</span>
+      <span class="tag">🌐 Web Development</span>
+      <span class="tag">📖 Curious Learning</span>
+      <span class="tag">💡 Problem Solving</span>
+    </div>
+  </section>
+
+  <!-- CONNECT -->
+  <section id="connect">
+    <div class="section-label">Connect with me</div>
+    <div class="social-list">
+
+      <a href="https://github.com/radiph" target="_blank" class="social-item">
+        <div class="social-left">
+          <div class="social-icon">
+            <svg viewBox="0 0 24 24" fill="#1a1a1a"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.09.68-.22.68-.49v-1.73c-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.1-1.48-1.1-1.48-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85.004 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49C19.13 20.65 22 16.8 22 12.26 22 6.58 17.52 2 12 2z"/></svg>
+          </div>
+          <div>
+            <div class="social-name">GitHub</div>
+            <div class="social-handle">github.com/radiph</div>
+          </div>
+        </div>
+        <span class="arrow">↗</span>
+      </a>
+
+      <a href="https://www.facebook.com/Radiph Dangal" target="_blank" class="social-item">
+        <div class="social-left">
+          <div class="social-icon">
+            <svg viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.514c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          </div>
+          <div>
+            <div class="social-name">Facebook</div>
+            <div class="social-handle">Radiph Dangal</div>
+          </div>
+        </div>
+        <span class="arrow">↗</span>
+      </a>
+
+      <a href="https://www.instagram.com/_radiph_" target="_blank" class="social-item">
+        <div class="social-left">
+          <div class="social-icon">
+            <svg viewBox="0 0 24 24" fill="url(#ig-grad)">
+              <defs>
+                <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#f09433"/>
+                  <stop offset="25%" stop-color="#e6683c"/>
+                  <stop offset="50%" stop-color="#dc2743"/>
+                  <stop offset="75%" stop-color="#cc2366"/>
+                  <stop offset="100%" stop-color="#bc1888"/>
+                </linearGradient>
+              </defs>
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="social-name">Instagram</div>
+            <div class="social-handle">@_radiph_</div>
+          </div>
+        </div>
+        <span class="arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>© 2025 Radiph Dangal</span>
+  <span>Made with curiosity ✦ Nepal</span>
+</footer>
+
+</body>
+</html>
