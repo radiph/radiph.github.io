@@ -29,6 +29,22 @@
 
     html { scroll-behavior: smooth; }
 
+    /* ── CUSTOM SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--surface2);
+      border-radius: 4px;
+      border: 2px solid var(--bg);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--blue);
+    }
+
     body {
       font-family: var(--font-body);
       background: var(--bg);
@@ -43,19 +59,29 @@
       content: '';
       position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 0; opacity: 0.4;
+      pointer-events: none; z-index: 10; opacity: 0.4;
     }
 
     /* ── CURSOR GLOW ── */
     #cursor-glow {
       position: fixed;
-      width: 400px; height: 400px;
+      width: 500px; height: 500px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%);
       pointer-events: none;
       transform: translate(-50%, -50%);
-      transition: opacity 0.3s;
+      transition: opacity 0.3s ease;
       z-index: 1;
+    }
+
+    /* ── BACKGROUND CANVAS ── */
+    #particles-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
     }
 
     /* ── NAV ── */
@@ -65,8 +91,9 @@
       padding: 0 2rem;
       height: 60px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(8,12,20,0.8);
+      background: rgba(8,12,20,0.75);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
     }
     .nav-logo {
@@ -79,9 +106,15 @@
     .nav-links a {
       font-size: 13px; font-weight: 500;
       color: var(--muted2); text-decoration: none;
-      transition: color .2s;
+      transition: color .3s, text-shadow .3s;
     }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover, .nav-links a.active { 
+      color: var(--text); 
+      text-shadow: 0 0 8px rgba(255,255,255,0.2);
+    }
+    .nav-links a.active {
+      color: var(--blue-bright);
+    }
     .nav-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--blue);
@@ -95,7 +128,7 @@
       min-height: 100vh;
       display: flex; flex-direction: column;
       justify-content: center; align-items: flex-start;
-      padding: 80px 2rem 4rem;
+      padding: 100px 2rem 6rem;
       max-width: 900px; margin: 0 auto;
       position: relative; z-index: 2;
     }
@@ -113,7 +146,7 @@
       line-height: 1.0;
       letter-spacing: -2px;
       color: var(--text);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       opacity: 0; animation: fadeUp .7s .4s forwards;
     }
     .hero-name .blue-char { color: var(--blue-bright); }
@@ -137,7 +170,7 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .hero-bio {
       font-size: 16px; color: var(--muted2);
-      max-width: 520px; line-height: 1.8;
+      max-width: 540px; line-height: 1.8;
       margin-bottom: 2.5rem;
       opacity: 0; animation: fadeUp .7s .8s forwards;
     }
@@ -149,19 +182,20 @@
       display: inline-flex; align-items: center; gap: 8px;
       font-family: var(--font-body);
       font-size: 14px; font-weight: 500;
-      padding: 10px 22px; border-radius: 8px;
+      padding: 11px 24px; border-radius: 8px;
       text-decoration: none; border: none; cursor: pointer;
-      transition: all .2s; position: relative; overflow: hidden;
+      transition: all .25s cubic-bezier(0.25, 1, 0.5, 1); 
+      position: relative; overflow: hidden;
     }
     .btn-primary {
       background: var(--blue);
       color: #fff;
-      box-shadow: 0 0 20px rgba(59,130,246,0.3);
+      box-shadow: 0 0 20px rgba(59,130,246,0.25);
     }
     .btn-primary:hover {
       background: var(--blue-bright);
-      box-shadow: 0 0 32px rgba(59,130,246,0.5);
-      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(59,130,246,0.45);
+      transform: translateY(-2px);
     }
     .btn-ghost {
       background: var(--surface);
@@ -171,10 +205,11 @@
     .btn-ghost:hover {
       border-color: var(--blue);
       color: var(--blue-bright);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      background: var(--surface2);
     }
     .scroll-hint {
-      position: absolute; bottom: 2rem; left: 50%;
+      position: absolute; bottom: 2.5rem; left: 50%;
       transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 6px;
       font-family: var(--font-mono); font-size: 11px; color: var(--muted);
@@ -183,30 +218,30 @@
     .scroll-line {
       width: 1px; height: 40px;
       background: linear-gradient(to bottom, var(--blue), transparent);
-      animation: scrollDrop 1.5s ease-in-out infinite;
+      animation: scrollDrop 2s ease-in-out infinite;
     }
     @keyframes scrollDrop { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
 
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(20px); }
+      from { opacity:0; transform:translateY(25px); }
       to   { opacity:1; transform:translateY(0); }
     }
 
-    /* ── GRID BACKGROUND HERO ── */
     .hero-grid {
       position: absolute; inset: 0; z-index: 0;
       background-image:
-        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
       background-size: 60px 60px;
       mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
     }
 
     /* ── SECTIONS ── */
     section {
       max-width: 900px; margin: 0 auto;
-      padding: 5rem 2rem;
-      position: relative; z-index: 2;
+      padding: 6rem 2rem;
+      position: relative; z-index: 5;
       border-top: 1px solid var(--border);
     }
     .section-header {
@@ -228,33 +263,37 @@
       background: linear-gradient(to right, var(--border2), transparent);
     }
 
-    /* ── ABOUT CARDS ── */
+    /* ── ABOUT CARDS (With 3D Perspective Context) ── */
     .about-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      perspective: 1000px;
     }
     .info-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.25rem;
-      transition: border-color .2s, transform .2s;
+      padding: 1.5rem;
+      transition: border-color .25s, box-shadow .25s;
       cursor: default;
+      transform-style: preserve-3d;
+      transform: translateZ(0);
     }
     .info-card:hover {
-      border-color: var(--blue);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 32px var(--blue-glow2);
+      border-color: rgba(59,130,246,0.4);
+      box-shadow: 0 12px 40px var(--blue-glow2);
     }
     .info-card .ic-label {
       font-family: var(--font-mono);
       font-size: 10px; color: var(--blue);
       letter-spacing: .1em; text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      transform: translateZ(20px);
     }
     .info-card .ic-value {
-      font-size: 15px; font-weight: 500; color: var(--text);
+      font-size: 16px; font-weight: 500; color: var(--text);
+      transform: translateZ(30px);
     }
 
     /* ── SKILLS ── */
@@ -264,38 +303,43 @@
       font-size: 12px; font-weight: 500;
       color: var(--blue-bright);
       background: var(--blue-glow2);
-      border: 1px solid rgba(59,130,246,0.2);
+      border: 1px solid rgba(59,130,246,0.15);
       border-radius: 6px;
       padding: 6px 14px;
-      transition: all .2s; cursor: default;
+      transition: all .25s ease; cursor: default;
     }
     .skill-tag:hover {
       background: var(--blue-glow);
       border-color: var(--blue);
-      box-shadow: 0 0 12px var(--blue-glow);
+      box-shadow: 0 0 15px rgba(59,130,246,0.2);
       transform: translateY(-2px);
     }
 
     /* ── INTERESTS ── */
-    .interests-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .interests-row { 
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.25rem;
+      perspective: 1000px;
+    }
     .interest-card {
-      flex: 1; min-width: 180px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.5rem 1.25rem;
+      padding: 1.75rem 1.25rem;
       text-align: center;
-      transition: all .25s;
+      transition: border-color .25s, box-shadow .25s;
       cursor: default;
+      transform-style: preserve-3d;
+      transform: translateZ(0);
     }
     .interest-card:hover {
-      border-color: var(--blue);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px var(--blue-glow2);
+      border-color: rgba(59,130,246,0.4);
+      box-shadow: 0 16px 45px var(--blue-glow2);
     }
-    .interest-icon { font-size: 2rem; margin-bottom: .75rem; display: block; }
-    .interest-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
-    .interest-sub { font-size: 12px; color: var(--muted); }
+    .interest-icon { font-size: 2.25rem; margin-bottom: .75rem; display: block; transform: translateZ(35px); }
+    .interest-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; transform: translateZ(20px); }
+    .interest-sub { font-size: 12px; color: var(--muted); transform: translateZ(10px); }
 
     /* ── QUOTE ── */
     .quote-box {
@@ -304,10 +348,13 @@
       border: 1px solid var(--border);
       border-left: 3px solid var(--blue);
       border-radius: 0 12px 12px 0;
-      padding: 2rem 2rem 2rem 2.5rem;
-      transition: box-shadow .3s;
+      padding: 2.2rem 2.2rem 2.2rem 2.8rem;
+      transition: box-shadow .3s, border-color .3s;
     }
     .quote-box:hover {
+      border-top-color: rgba(59,130,246,0.15);
+      border-right-color: rgba(59,130,246,0.15);
+      border-bottom-color: rgba(59,130,246,0.15);
       box-shadow: -4px 0 32px var(--blue-glow), 0 8px 32px var(--blue-glow2);
     }
     .quote-mark {
@@ -328,7 +375,7 @@
     .quote-attr {
       font-family: var(--font-mono);
       font-size: 12px; color: var(--blue);
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       letter-spacing: .05em;
     }
 
@@ -339,26 +386,26 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1rem 1.25rem;
+      padding: 1.1rem 1.5rem;
       text-decoration: none; color: var(--text);
-      transition: all .2s;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
       position: relative; overflow: hidden;
     }
     .social-item::before {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(135deg, var(--blue-glow2), transparent);
+      background: linear-gradient(135deg, rgba(59,130,246,0.05), transparent);
       opacity: 0; transition: opacity .3s;
     }
     .social-item:hover {
-      border-color: var(--blue);
-      transform: translateX(4px);
-      box-shadow: 0 4px 20px var(--blue-glow2);
+      border-color: rgba(59,130,246,0.35);
+      transform: translateX(6px);
+      box-shadow: 0 6px 24px var(--blue-glow2);
     }
     .social-item:hover::before { opacity: 1; }
-    .social-left { display: flex; align-items: center; gap: 14px; position: relative; }
+    .social-left { display: flex; align-items: center; gap: 16px; position: relative; }
     .social-icon {
-      width: 38px; height: 38px; border-radius: 9px;
+      width: 40px; height: 40px; border-radius: 9px;
       background: var(--surface2);
       border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
@@ -367,15 +414,16 @@
     .social-icon svg { width: 18px; height: 18px; }
     .social-name { font-size: 14px; font-weight: 500; }
     .social-handle { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
-    .social-arrow { color: var(--blue); font-size: 18px; position: relative; }
+    .social-arrow { color: var(--blue); font-size: 18px; position: relative; transition: transform .2s; }
+    .social-item:hover .social-arrow { transform: translate(2px, -2px); }
 
     /* ── FOOTER ── */
     footer {
       max-width: 900px; margin: 0 auto;
-      padding: 2rem;
+      padding: 2.5rem 2rem;
       border-top: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
-      position: relative; z-index: 2;
+      position: relative; z-index: 5;
       flex-wrap: wrap; gap: 1rem;
     }
     footer span {
@@ -397,15 +445,19 @@
 
     /* ── SCROLL REVEAL ── */
     .reveal {
-      opacity: 0; transform: translateY(30px);
-      transition: opacity .7s ease, transform .7s ease;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .6s cubic-bezier(0.25, 1, 0.5, 1), transform .6s cubic-bezier(0.25, 1, 0.5, 1);
     }
     .reveal.visible { opacity: 1; transform: none; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 650px) {
       .nav-links { display: none; }
       .hero { padding-left: 1.25rem; padding-right: 1.25rem; }
-      section { padding: 3.5rem 1.25rem; }
+      section { padding: 4.5rem 1.25rem; }
+      .about-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 450px) {
+      .about-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -415,17 +467,18 @@
 
 <nav>
   <span class="nav-logo"><span>~/</span>radiph</span>
-  <div class="nav-links">
-    <a href="#about">about</a>
-    <a href="#interests">interests</a>
-    <a href="#quote">quote</a>
-    <a href="#connect">connect</a>
+  <div class="nav-links" id="spy-nav">
+    <a href="#about" class="nav-item">about</a>
+    <a href="#interests" class="nav-item">interests</a>
+    <a href="#quote" class="nav-item">quote</a>
+    <a href="#connect" class="nav-item">connect</a>
   </div>
   <div class="nav-dot"></div>
 </nav>
 
-<div class="hero">
+<div class="hero" id="hero-section">
   <div class="hero-grid"></div>
+  <canvas id="particles-canvas"></canvas>
 
   <p class="hero-eyebrow">// Hello, world — I'm</p>
 
@@ -463,27 +516,27 @@
     <div class="section-line"></div>
   </div>
   <div class="about-grid reveal">
-    <div class="info-card">
+    <div class="info-card tilt-target">
       <div class="ic-label">age</div>
       <div class="ic-value">16 years old</div>
     </div>
-    <div class="info-card">
+    <div class="info-card tilt-target">
       <div class="ic-label">location</div>
       <div class="ic-value">Sundarharaicha, Nepal 🇳🇵</div>
     </div>
-    <div class="info-card">
+    <div class="info-card tilt-target">
       <div class="ic-label">school</div>
       <div class="ic-value">Sukuna Secondary School</div>
     </div>
-    <div class="info-card">
+    <div class="info-card tilt-target">
       <div class="ic-label">subjects</div>
       <div class="ic-value">Science &amp; CS</div>
     </div>
-    <div class="info-card">
+    <div class="info-card tilt-target">
       <div class="ic-label">dream</div>
       <div class="ic-value">Scientist / Researcher 🔬</div>
     </div>
-    <div class="info-card">
+    <div class="info-card tilt-target">
       <div class="ic-label">status</div>
       <div class="ic-value">Open to learning ⚡</div>
     </div>
@@ -514,22 +567,22 @@
     <div class="section-line"></div>
   </div>
   <div class="interests-row reveal">
-    <div class="interest-card">
+    <div class="interest-card tilt-target">
       <span class="interest-icon">🎮</span>
       <div class="interest-title">Gaming</div>
       <div class="interest-sub">PUBG &amp; Free Fire<br/>Strategic thinking, reflexes</div>
     </div>
-    <div class="interest-card">
+    <div class="interest-card tilt-target">
       <span class="interest-icon">🎵</span>
       <div class="interest-title">Music</div>
       <div class="interest-sub">Listening to beats<br/>Fuel for focus</div>
     </div>
-    <div class="interest-card">
+    <div class="interest-card tilt-target">
       <span class="interest-icon">🔬</span>
       <div class="interest-title">Science</div>
       <div class="interest-sub">How the universe works<br/>My biggest curiosity</div>
     </div>
-    <div class="interest-card">
+    <div class="interest-card tilt-target">
       <span class="interest-icon">💻</span>
       <div class="interest-title">Tech &amp; Code</div>
       <div class="interest-sub">Building with computers<br/>Exploring cybersecurity</div>
@@ -546,7 +599,7 @@
   <div class="quote-box reveal">
     <div class="quote-mark">"</div>
     <p class="quote-text">
-      The person dancing in the shade was thought to be insane by the one who could not hear the song.
+      The one dancing in the shade was thought to be go insane by the people who could not hear the song.
     </p>
     <p class="quote-attr">— Radiph's philosophy</p>
   </div>
@@ -642,7 +695,7 @@
 </section>
 
 <footer>
-  <span>© 2025 Radiph Dangal — Sundarharaicha, Nepal 🇳🇵</span>
+  <span>© 2026 Radiph Dangal — Sundarharaicha, Nepal 🇳🇵</span>
   <div class="status-pill">
     <div class="status-dot"></div>
     <span class="status-text">available to connect</span>
@@ -652,10 +705,75 @@
 <script>
   /* ── CURSOR GLOW ── */
   const glow = document.getElementById('cursor-glow');
-  document.addEventListener('mousemove', e => {
-    glow.style.left = e.clientX + 'px';
-    glow.style.top  = e.clientY + 'px';
+  let isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  if(!isMobile) {
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top  = e.clientY + 'px';
+    });
+  }
+
+  /* ── HERO PARTICLES CANVAS ── */
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particlesArray = [];
+  let heroSection = document.getElementById('hero-section');
+
+  function resizeCanvas() {
+    canvas.width = heroSection.offsetWidth;
+    canvas.height = heroSection.offsetHeight;
+  }
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    isMobile = window.matchMedia("(max-width: 768px)").matches;
   });
+  resizeCanvas();
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.size = Math.random() * 1.5 + 0.5;
+      this.speedX = Math.random() * 0.2 - 0.1;
+      this.speedY = Math.random() * 0.2 - 0.1;
+      this.opacity = Math.random() * 0.5 + 0.2;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+
+      if (this.x > canvas.width) this.x = 0;
+      if (this.x < 0) this.x = canvas.width;
+      if (this.y > canvas.height) this.y = 0;
+      if (this.y < 0) this.y = canvas.height;
+    }
+    draw() {
+      ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function initParticles() {
+    particlesArray = [];
+    const count = isMobile ? 30 : 70;
+    for (let i = 0; i < count; i++) {
+      particlesArray.push(new Particle());
+    }
+  }
+  initParticles();
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
 
   /* ── TYPEWRITER ── */
   const phrases = [
@@ -681,16 +799,72 @@
   }
   setTimeout(type, 1200);
 
-  /* ── SCROLL REVEAL ── */
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
+  /* ── INTERSECTION OBSERVER (REVEAL & NAV SPY) ── */
+  const sections = document.querySelectorAll('section');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observerOptions = {
+    root: null,
+    threshold: 0.15,
+    rootMargin: "-10% 0px -40% 0px"
+  };
+
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      // Content fade up reveal logic
+      if (entry.isIntersecting && entry.target.classList.contains('reveal')) {
+        entry.target.classList.add('visible');
+      }
+      
+      // Navigation highlight logic
+      if (entry.isIntersecting) {
+        let currentId = entry.target.getAttribute('id');
+        navItems.forEach(item => {
+          if (item.getAttribute('href') === `#${currentId}`) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
       }
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }, observerOptions);
+
+  document.querySelectorAll('.reveal').forEach(el => sectionObserver.observe(el));
+  sections.forEach(sec => sectionObserver.observe(sec));
+
+  // Remove active highlight if scrolled all the way up to Hero section
+  window.addEventListener('scroll', () => {
+    if (window.scrollY < 200) {
+      navItems.forEach(item => item.classList.remove('active'));
+    }
+  });
+
+  /* ── VANILLA 3D TILT EFFECT ── */
+  const tiltCards = document.querySelectorAll('.tilt-target');
+  
+  if(!isMobile) {
+    tiltCards.forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; 
+        const y = e.clientY - rect.top; 
+        
+        const xc = rect.width / 2;
+        const yc = rect.height / 2;
+        
+        // Calculate tilt angles max 12 degrees
+        const tiltX = (yc - y) / yc * 12;
+        const tiltY = (x - xc) / xc * 12;
+        
+        card.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(10px)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0)';
+      });
+    });
+  }
 </script>
 </body>
 </html>
